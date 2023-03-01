@@ -51,7 +51,7 @@ else
 	exit
 fi
 
-types="classification detection segmentation"
+types="classification detection segmentation object_6d_pose_estimation"
 DEST_DIR=../model_zoo/
 mkdir -p $DEST_DIR
 declare -A keys
@@ -192,9 +192,10 @@ list_models()
 	echo ""
 	echo "./download_models.sh --download | -d name1 name2 .... | To download models"
 	echo "               Ex: ./download_models.sh -d mobilenet_v1_1.0_224.tflite efficientnet-lite0-fp32.tflite"
-	echo "                    classification          - To download all classification models"
-	echo "                    detection               - To download all object detection models"
-	echo "                    segmentation            - To download all semantic segmentation models"
+	echo "                    classification            - To download all classification models"
+	echo "                    detection                 - To download all object detection models"
+	echo "                    segmentation              - To download all semantic segmentation models"
+	echo "                    object_6d_pose_estimation - To download all 6D Pose estimation models"
 	echo "               Ex: ./download_models.sh -d classification - Will download all classification models"
 }
 
@@ -246,9 +247,10 @@ usage()
 	echo "./download_models.sh --list  | -l - To list all the models available"
 	echo "./download_models.sh --download | -d name1 name2 .... | To download models"
 	echo "               Ex: ./download_models.sh -d mobilenet_v1_1.0_224.tflite efficientnet-lite0-fp32.tflite"
-	echo "                    classification          - To download all classification models"
-	echo "                    detection               - To download all object detection models"
-	echo "                    segmentation            - To download all semantic segmentation models"
+	echo "                    classification            - To download all classification models"
+	echo "                    detection                 - To download all object detection models"
+	echo "                    segmentation              - To download all semantic segmentation models"
+	echo "                    object_6d_pose_estimation - To download all 6D Pose estimation models"
 	echo "               Ex: ./download_models.sh -d classification - Will download all classification models"
 	echo "./download_models.sh --recommended  | -r - To download out of the box models"
 	echo "./download_models.sh --help | -h - To display this"
