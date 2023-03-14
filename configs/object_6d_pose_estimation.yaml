@@ -23,7 +23,7 @@ inputs:
         loop: True
 models:
     model0:
-        model_path: /opt/model_zoo/6dpose-7200_onnxrt_ycbv_edgeai-yolox_yolox_s_object_pose_ti_lite_640x480_57p75_onnx
+        model_path: /opt/model_zoo/ONR-6DP-7200-yolox-s-6d-object_pose-640x480
         viz_threshold: 0.8
 outputs:
     output0:
