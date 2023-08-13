@@ -1,5 +1,4 @@
-#!/bin/bash
-
+#!/usr/bin/python3
 #  Copyright (C) 2022 Texas Instruments Incorporated - http://www.ti.com/
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -30,43 +29,40 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-topdir=$EDGEAI_GST_APPS_PATH
-usb_camera=`ls /dev/v4l/by-path/*usb*video-index0 | head -1 | xargs readlink -f`
-usb_fmt=jpeg
-usb_width=1280
-usb_height=720
+import os
+import sys
+import yaml
+import gc
+import contextlib
 
-BRIGHTWHITE='\033[0;37;1m'
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-NOCOLOR='\033[0m'
+from optiflow_class import OptiFlowClass
+import utils
 
-####################################################################################################
+def main(sys_argv):
+    args = utils.get_cmdline_args(sys_argv)
 
-export TEST_ENGINE_DEBUG=1
-config_file="$topdir/tests/test_config.yaml"
-parse_script="$topdir/tests/parse_log_data.py"
-timeout=30
-filter=""
-measure_cpuload="false"
+    with open(args.config, 'r') as f:
+        config = yaml.safe_load(f)
 
-####################################################################################################
-cleanup() {
-	echo
-	echo "[Ctrl-C] Killing the script..."
-}
-
-# TODO: The trap is not reliable currently, need to be fixed
-trap cleanup SIGINT
-
-# Setup the source and sink in the test config YAML file
-sed -i "s@source:.*@source: $usb_camera@" $config_file
-sed -i "s@format:.*@format: $usb_fmt@" $config_file
-sed -i "1,/width:.*/s//width: $usb_width/" $config_file
-sed -i "1,/height:.*/s//height: $usb_height/" $config_file
-sed -i "s@sink:.*@sink: kmssink@" $config_file
-
-for test_suite in "OPTIFLOW-PERF-USBCAM"; do
-	cd $(dirname $0)
-	./test_engine.sh "OPTIFLOW-PERF-USBCAM" $config_file $timeout $parse_script "$filter" $measure_cpuload
-done
+    if not args.terminal:
+        optiflow = OptiFlowClass(config)
+        optiflow.run()
+        del optiflow
+    else:
+        sys.stdout.flush()
+        newstdout = os.dup(1)
+        devnull = os.open(os.devnull, os.O_WRONLY)
+        os.dup2(devnull, 1)
+        os.close(devnull)
+        sys.stdout = os.fdopen(newstdout, 'w')
+        optiflow = OptiFlowClass(config)
+        pipeline = optiflow.get_pipeline()
+        del optiflow
+        gc.collect()
+        pipeline = "gst-launch-1.0 " + pipeline
+        pipeline = pipeline.replace("\\","")
+        pipeline = pipeline.replace("\n","")
+        print(pipeline)
+    
+if __name__ == '__main__':
+    main(sys.argv)

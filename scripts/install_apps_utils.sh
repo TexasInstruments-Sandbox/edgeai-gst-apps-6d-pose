@@ -1,4 +1,5 @@
-#!/usr/bin/python3
+#!/bin/bash
+
 #  Copyright (C) 2022 Texas Instruments Incorporated - http://www.ti.com/
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -29,38 +30,59 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
-import sys
-import yaml
-import gc
-import contextlib
+current_dir=$(pwd)
+cd $(dirname $0)
 
-from optiflow_class import OptiFlowClass
-import utils
+if [ `arch` == "aarch64" ]; then
+    install_dir="/opt/"
+else
+    install_dir="../../"
+fi
+while getopts ":i:d" flag; do
+    case "${flag}" in
+        i)
+            if [ -z $OPTARG ] || [ ! -d $OPTARG ]; then
+                echo "Invalid installation directory "
+                cd $current_dir
+                exit 1
+            fi
+            install_dir="$OPTARG"
+            ;;
+        d)
+            build_flag="-DCMAKE_BUILD_TYPE=Debug"
+            ;;
+        *)
+            if [ $OPTARG == i ]; then
+                echo "Installation directory not provided"
+                cd $current_dir
+                exit 1
+            fi
+            ;;
+    esac
+done
 
-def main(sys_argv):
-    args = utils.get_cmdline_args(sys_argv)
+# Clone edgeai-apps-utils under /opt
+cd $install_dir
+ls | grep "edgeai-apps-utils"
+if [ "$?" -ne "0" ]; then
+    git clone --single-branch --branch EDGEAI_APP_STACK_09_00_00_00 https://git.ti.com/cgit/edgeai/edgeai-apps-utils
+    if [ "$?" -ne "0" ]; then
+        cd $current_dir
+        exit 1
+    fi
+fi
 
-    with open(args.config, 'r') as f:
-        config = yaml.safe_load(f)
-    sys.stdout.flush()
-    newstdout = os.dup(1)
-    devnull = os.open(os.devnull, os.O_WRONLY)
-    os.dup2(devnull, 1)
-    os.close(devnull)
-    sys.stdout = os.fdopen(newstdout, 'w')
-    optiflow = OptiFlowClass(config)
-    pipeline = optiflow.get_pipeline()
-    del optiflow
-    gc.collect()
+set -e
 
-    if (args.terminal):
-        pipeline = "gst-launch-1.0 " + pipeline
-        pipeline = pipeline.replace("\\","")
-        pipeline = pipeline.replace("\n","")
+# Install if running from target else skip
+if [ `arch` == "aarch64" ]; then
+    cd edgeai-apps-utils
+    rm -rf build
+    mkdir build
+    cd build
+    cmake $build_flag ..
+    make -j2
+    make install
+fi
 
-    return pipeline
-    
-if __name__ == '__main__':
-    pipeline = main(sys.argv)
-    print(pipeline)
+cd $current_dir
