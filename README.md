@@ -5,6 +5,7 @@ This repo adds support for object 6D pose estimation on top of edgeai-gst-apps
 
 ## Table of content
 - [Supported Devices](#supported-devices)
+- [SDK Version](#sdk-version)
 - [Steps to run](#steps-to-run)
 - [Result](#result)
 - [About Object 6D Pose Estimation](#about-object-6d-pose-estimation)
@@ -19,45 +20,50 @@ This repo adds support for object 6D pose estimation on top of edgeai-gst-apps
 | SK-TDA4VM               | :heavy_check_mark: |
 | AM69A                   | :heavy_check_mark: |
 
+## SDK Version
+
+This demo is supported on **EdgeAI SDK Version 9.0**
+
 ## Steps to run
 
 1. Clone this repo in your target under /opt
 
     ```console
-    root@tda4vm-sk:/opt# git clone https://github.com/TexasInstruments/edgeai-gst-apps-6d-pose.git
-    root@tda4vm-sk:/opt# cd edgeai-gst-apps-6d-pose
+    root@soc:/opt# git clone https://github.com/TexasInstruments/edgeai-gst-apps-6d-pose.git
+    root@soc:/opt# cd edgeai-gst-apps-6d-pose
     ```
 
 2. Download model for 6D pose estimation
 
     ```console
-    root@tda4vm-sk:/opt/edgeai-gst-apps-6d-pose# ./download_models.sh -d object_6d_pose_estimation
+    root@soc:/opt/edgeai-gst-apps-6d-pose# wget --proxy off https://software-dl.ti.com/jacinto7/esd/edgeai-marketplace/object-6d-pose-estimation/09_00_00/ONR-6DP-7200-yolox-s-6d-object_pose-640x480.tar.gz
+    root@soc:/opt/edgeai-gst-apps-human-pose# tar -xf ONR-6DP-7200-yolox-s-6d-object_pose-640x480.tar.gz -C /opt/model_zoo/
     ```
 
 3. Download sample input video
 
     ```console
-    root@tda4vm-sk:/opt/edgeai-gst-apps-6d-pose# wget --proxy off http://software-dl.ti.com/jacinto7/esd/edgeai-test-data/demo_videos/object_6d_pose_estimation_sample.h264 -O /opt/edgeai-test-data/videos/object_6d_pose_estimation_sample.h264
+    root@soc:/opt/edgeai-gst-apps-6d-pose# wget --proxy off https://software-dl.ti.com/jacinto7/esd/edgeai-marketplace/object-6d-pose-estimation/09_00_00/object_6d_pose_estimation_sample.h264 -O /opt/edgeai-test-data/videos/object_6d_pose_estimation_sample.h264
     ```
 
 4. Run the python app
 
     ```console
-    root@tda4vm-sk:/opt/edgeai-gst-apps-6d-pose# cd apps_python
-    root@tda4vm-sk:/opt/edgeai-gst-apps-6d-pose/apps_python# ./app_edgeai.py ../configs/object_6d_pose_estimation.yaml
+    root@soc:/opt/edgeai-gst-apps-6d-pose# cd apps_python
+    root@soc:/opt/edgeai-gst-apps-6d-pose/apps_python# ./app_edgeai.py ../configs/object_6d_pose_estimation.yaml
     ```
 
 5. Compile cpp apps
 
     ```console
-    root@tda4vm-sk:/opt/edgeai-gst-apps-6d-pose# ./scripts/compile_cpp_apps.sh
+    root@soc:/opt/edgeai-gst-apps-6d-pose# ./scripts/compile_cpp_apps.sh
     ```
 
-5. Run CPP app
+6. Run CPP app
 
      ```console
-    root@tda4vm-sk:/opt/edgeai-gst-apps-6d-pose# cd apps_cpp
-    root@tda4vm-sk:/opt/edgeai-gst-apps-6d-pose/apps_cpp# ./bin/Release/app_edgeai ../configs/object_6d_pose_estimation.yaml
+    root@soc:/opt/edgeai-gst-apps-6d-pose# cd apps_cpp
+    root@soc:/opt/edgeai-gst-apps-6d-pose/apps_cpp# ./bin/Release/app_edgeai ../configs/object_6d_pose_estimation.yaml
     ```
 
 ## Result    
