@@ -5,11 +5,13 @@ This repo adds support for object 6D pose estimation on top of edgeai-gst-apps
 
 ## Table of content
 - [Supported Devices](#supported-devices)
+- [SDK Version](#sdk-version)
 - [Steps to run](#steps-to-run)
 - [Result](#result)
 - [About Object 6D Pose Estimation](#about-object-6d-pose-estimation)
 - [Model Directory](#model-directory)
 - [How to add your own custom post-processing?](#how-to-add-your-own-custom-post-processing)
+
 ## Supported Devices
 
 | **DEVICE**              | **Supported**      |
@@ -18,6 +20,10 @@ This repo adds support for object 6D pose estimation on top of edgeai-gst-apps
 | AM68A                   | :heavy_check_mark: |
 | SK-TDA4VM               | :heavy_check_mark: |
 | AM69A                   | :heavy_check_mark: |
+
+## SDK Version
+
+This demo is supported on **EdgeAI SDK Version 8.6**
 
 ## Steps to run
 
